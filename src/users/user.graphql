@@ -3,15 +3,24 @@ type User{
     lastName: String!
     email: String!
 }
+
 input UserInput{
     firstName: String!
     lastName: String!
     email: String!
     password: String!
 }
-type Query {
-    getUser(id: String) : User
+
+# for some reason NestJS is not updating the type classes, so I can't use this just yet.
+type LoginResponse {
+    jwt: String!
+    user: User!
 }
+
+type Query {
+    userLogin(email: String, password: String) : String
+}
+
 type Mutation {
   createUser(input: UserInput!): User
 }

@@ -9,12 +9,20 @@ export class UsersResolver {
       ) {}    
 
       @Query()
-      async getUser(@Args('id') id: String) {
-        return this.usersService.findOneById(id);
+      async userLogin(@Args('email') email: string, @Args('password') password: string) {
+        // In order to avoid sending plain text passwords over the wire, I am sending a base64 encrypted string.
+        const decodedPassword = Buffer.from(password, "base64").toString()
+        const user = await this.usersService.findOneByEmailAndPassword(email, decodedPassword);
+        if(user) {
+          return user.authToken
+        }
       }
+
       @Mutation("createUser")
       async createUser(@Args('input')input: UserInput) {
-        const newUser = await this.usersService.createUser(input.firstName, input.lastName, input.email, input.password);
+        // In order to avoid sending plain text passwords over the wire, I am sending a base64 encrypted string.
+        const decodedPassword = Buffer.from(input.password, "base64").toString()
+        const newUser = await this.usersService.createUser(input.firstName, input.lastName, input.email, decodedPassword);
         const response = new User()
         response.firstName = newUser.firstName
         response.lastName = newUser.lastName
