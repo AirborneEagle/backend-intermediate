@@ -7,21 +7,30 @@
 
 /* tslint:disable */
 /* eslint-disable */
-export class User {
-    __typename?: 'User';
-    name: string;
+export class UserInput {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+}
+
+export class UserResponse {
+    __typename?: 'UserResponse';
+    firstName: string;
+    lastName: string;
+    email: string;
 }
 
 export abstract class IQuery {
     __typename?: 'IQuery';
 
-    abstract getUsers(id: string): User | Promise<User>;
+    abstract getUser(id: string): UserResponse | Promise<UserResponse>;
 }
 
 export abstract class IMutation {
     __typename?: 'IMutation';
 
-    abstract createUser(firstName: string, lastName: string, email: string, password: string): User | Promise<User>;
+    abstract createUser(input: UserInput): UserResponse | Promise<UserResponse>;
 }
 
 type Nullable<T> = T | null;

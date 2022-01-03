@@ -1,11 +1,19 @@
-type User{
-    name: String!
+type UserResponse{
+    firstName: String!
+    lastName: String!
+    email: String!
+}
+input UserInput{
+    firstName: String!
+    lastName: String!
+    email: String!
+    password: String!
 }
 type Query {
-    getUsers(id: String!): User!
+    getUser(id: String!): UserResponse!
 }
 type Mutation {
-  createUser(firstName: String!, lastName: String!, email: String!, password: String!): User!
+  createUser(input: UserInput!): UserResponse!
 }
 
 schema {
