@@ -1,6 +1,6 @@
 import { BeforeCreate, Column, Table } from "sequelize-typescript";
 import bcrypt from 'bcrypt';
-import { Model } from "sequelize/dist";
+import { Model } from "sequelize";
 
 @Table
 export default class UserEntity extends Model{

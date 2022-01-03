@@ -1,4 +1,4 @@
-type UserResponse{
+type User{
     firstName: String!
     lastName: String!
     email: String!
@@ -10,13 +10,8 @@ input UserInput{
     password: String!
 }
 type Query {
-    getUser(id: String!): UserResponse!
+    getUser(id: String) : User
 }
 type Mutation {
-  createUser(input: UserInput!): UserResponse!
-}
-
-schema {
-  query: Query
-  mutation: Mutation
+  createUser(input: UserInput!): User
 }

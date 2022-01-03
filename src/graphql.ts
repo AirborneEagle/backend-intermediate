@@ -14,8 +14,8 @@ export class UserInput {
     password: string;
 }
 
-export class UserResponse {
-    __typename?: 'UserResponse';
+export class User {
+    __typename?: 'User';
     firstName: string;
     lastName: string;
     email: string;
@@ -24,13 +24,13 @@ export class UserResponse {
 export abstract class IQuery {
     __typename?: 'IQuery';
 
-    abstract getUser(id: string): UserResponse | Promise<UserResponse>;
+    abstract getUser(id?: Nullable<string>): Nullable<User> | Promise<Nullable<User>>;
 }
 
 export abstract class IMutation {
     __typename?: 'IMutation';
 
-    abstract createUser(input: UserInput): UserResponse | Promise<UserResponse>;
+    abstract createUser(input: UserInput): Nullable<User> | Promise<Nullable<User>>;
 }
 
 type Nullable<T> = T | null;
