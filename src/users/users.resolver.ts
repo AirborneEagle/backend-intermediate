@@ -1,5 +1,5 @@
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { UserInput, User } from "../graphql";
+import { UserInput, User, LoginResponse } from "../graphql";
 import { UsersService } from "./users.service";
 
 @Resolver("User")
@@ -14,7 +14,10 @@ export class UsersResolver {
         const decodedPassword = Buffer.from(password, "base64").toString()
         const user = await this.usersService.findOneByEmailAndPassword(email, decodedPassword);
         if(user) {
-          return user.authToken
+          const response = new LoginResponse()
+          response.jwt = user.authToken
+          response.user = user
+          return response
         }
       }
 

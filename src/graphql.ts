@@ -15,21 +15,21 @@ export class UserInput {
 }
 
 export class User {
-    __typename?: 'User';
     firstName: string;
     lastName: string;
     email: string;
 }
 
-export abstract class IQuery {
-    __typename?: 'IQuery';
+export class LoginResponse {
+    jwt: string;
+    user: User;
+}
 
-    abstract getUser(id?: Nullable<string>): Nullable<User> | Promise<Nullable<User>>;
+export abstract class IQuery {
+    abstract userLogin(email?: Nullable<string>, password?: Nullable<string>): LoginResponse | Promise<LoginResponse>;
 }
 
 export abstract class IMutation {
-    __typename?: 'IMutation';
-
     abstract createUser(input: UserInput): Nullable<User> | Promise<Nullable<User>>;
 }
 
