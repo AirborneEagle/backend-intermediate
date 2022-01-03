@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Sequelize } from 'sequelize-typescript'
 import UserEntity from './users/users.entity';
+import dbInit from './db/init';
 require('dotenv').config();
 
 const sequelize = new Sequelize({
@@ -16,6 +17,7 @@ const sequelize = new Sequelize({
 
 
 async function bootstrap() {
+  dbInit()
   const app = await NestFactory.create(AppModule);
   await app.listen(3000);
 }
