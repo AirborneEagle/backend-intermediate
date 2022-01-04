@@ -3,6 +3,7 @@ type User{
     lastName: String!
     email: String!
     posts: [Post]
+    postCount: Int
 }
 
 input UserInput{

@@ -1,4 +1,4 @@
-import { Args, Context, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
 import { IncomingMessage } from "http";
 import { JwtPayload, verify } from "jsonwebtoken";
 import { PostsService } from "src/posts/posts.service";
@@ -11,6 +11,28 @@ export class UsersResolver {
         private usersService: UsersService,
         private postsService: PostsService
       ) {}    
+
+      async _resolvePosts(userId: number) : Promise<Post[]>{
+        const postEntities = await this.postsService.findByUserId(userId)
+        return postEntities.map<Post>((pe, _index, _all) => {
+          const post = new Post()
+          post.message = pe.message
+          post.userId = pe.userId
+          return post
+        })
+      }
+
+      @ResolveField()
+      async posts(@Parent() user){
+        const{id} = user
+        return this._resolvePosts(id)
+      }
+
+      @ResolveField()
+      async postCount(@Parent() user) : Promise<number>{
+        const{id} = user
+        return (await this._resolvePosts(id)).length
+      }
 
       @Query()
       async getNames(@Context("req") request: IncomingMessage){
@@ -27,13 +49,7 @@ export class UsersResolver {
 
       @Query()
       async getAllPosts(@Args('userKey') userKey: number){
-        const postEntities = await this.postsService.findByUserId(userKey)
-        return postEntities.map<Post>((pe, _index, _all) => {
-          const post = new Post()
-          post.message = pe.message
-          post.userId = pe.userId
-          return post
-        })
+        return this._resolvePosts(userKey)
       }
 
       @Mutation()
