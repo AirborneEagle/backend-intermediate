@@ -23,6 +23,7 @@ type NameResponse {
 
 type Query {
     getNames: NameResponse
+    getAllPosts(userKey: Int) : [Post]
 }
 
 type Mutation {

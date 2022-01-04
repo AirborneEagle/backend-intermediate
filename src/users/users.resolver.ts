@@ -1,13 +1,15 @@
 import { Args, Context, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { IncomingMessage } from "http";
 import { JwtPayload, verify } from "jsonwebtoken";
-import { UserInput, User, LoginResponse, NameResponse } from "../graphql";
+import { PostsService } from "src/posts/posts.service";
+import { UserInput, User, LoginResponse, NameResponse, Post } from "../graphql";
 import { UsersService } from "./users.service";
 
 @Resolver("User")
 export class UsersResolver {
     constructor(
         private usersService: UsersService,
+        private postsService: PostsService
       ) {}    
 
       @Query()
@@ -21,6 +23,17 @@ export class UsersResolver {
         response.firstName = user.firstName
         response.lsatName = user.lastName
         return response
+      }
+
+      @Query()
+      async getAllPosts(@Args('userKey') userKey: number){
+        const postEntities = await this.postsService.findByUserId(userKey)
+        return postEntities.map<Post>((pe, _index, _all) => {
+          const post = new Post()
+          post.message = pe.message
+          post.userId = pe.userId
+          return post
+        })
       }
 
       @Mutation()

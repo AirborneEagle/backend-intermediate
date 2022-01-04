@@ -4,6 +4,9 @@ import PostEntity from "./posts.entity";
 
 @Injectable()
 export class PostsService {
+    async findByUserId(userId: number) :Promise<PostEntity[]>{
+      return await PostEntity.findAll({where: {userId: userId}})
+    }
 
     async createPost(message: string, user: UserEntity) : Promise<PostEntity>{
         const post = new PostEntity()
