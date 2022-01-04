@@ -1,6 +1,7 @@
 import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
 import { IncomingMessage } from "http";
 import { JwtPayload, verify } from "jsonwebtoken";
+import { RedisCacheService } from "src/db/redis.service";
 import { PostsService } from "src/posts/posts.service";
 import { UserInput, User, LoginResponse, NameResponse, Post } from "../graphql";
 import { UsersService } from "./users.service";
@@ -9,10 +10,13 @@ import { UsersService } from "./users.service";
 export class UsersResolver {
     constructor(
         private usersService: UsersService,
-        private postsService: PostsService
+        private postsService: PostsService,
+        private redisSerice: RedisCacheService
       ) {}    
 
       async _resolvePosts(userId: number) : Promise<Post[]>{
+        const cachedPosts = await this.redisSerice.get("POSTS")
+        console.log("cahcedPosts: " + cachedPosts)
         const postEntities = await this.postsService.findByUserId(userId)
         return postEntities.map<Post>((pe, _index, _all) => {
           const post = new Post()
