@@ -14,10 +14,24 @@ export class UserInput {
     password: string;
 }
 
+export class Post {
+    message?: Nullable<string>;
+    userId?: Nullable<number>;
+}
+
+export abstract class IMutation {
+    abstract createPost(message?: Nullable<string>): Nullable<Post> | Promise<Nullable<Post>>;
+
+    abstract userLogin(email?: Nullable<string>, password?: Nullable<string>): Nullable<LoginResponse> | Promise<Nullable<LoginResponse>>;
+
+    abstract createUser(input: UserInput): Nullable<User> | Promise<Nullable<User>>;
+}
+
 export class User {
     firstName: string;
     lastName: string;
     email: string;
+    posts?: Nullable<Nullable<Post>[]>;
 }
 
 export class LoginResponse {
@@ -32,12 +46,6 @@ export class NameResponse {
 
 export abstract class IQuery {
     abstract getNames(): Nullable<NameResponse> | Promise<Nullable<NameResponse>>;
-}
-
-export abstract class IMutation {
-    abstract userLogin(email?: Nullable<string>, password?: Nullable<string>): Nullable<LoginResponse> | Promise<Nullable<LoginResponse>>;
-
-    abstract createUser(input: UserInput): Nullable<User> | Promise<Nullable<User>>;
 }
 
 type Nullable<T> = T | null;

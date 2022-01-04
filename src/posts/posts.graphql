@@ -1,0 +1,7 @@
+type Post {
+    message: String
+    userId: Int
+}
+type Mutation {
+    createPost(message: String): Post
+}

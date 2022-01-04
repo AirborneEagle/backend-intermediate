@@ -1,7 +1,8 @@
-import { BeforeCreate, Column, IsEmail, Table, Unique } from "sequelize-typescript";
+import { BeforeCreate, Column, HasMany, IsEmail, Table, Unique } from "sequelize-typescript";
 import * as bcrypt from 'bcrypt';
 import { Model } from "sequelize-typescript";
 import { sign } from 'jsonwebtoken';
+import PostEntity from "src/posts/posts.entity";
 
 @Table
 export default class UserEntity extends Model{
@@ -19,6 +20,9 @@ export default class UserEntity extends Model{
 
     @Column
     password: string
+
+    @HasMany(() => PostEntity)
+    posts: PostEntity[]
 
     @BeforeCreate
     static async hashPassword(instance: UserEntity) {
