@@ -25,11 +25,18 @@ export class LoginResponse {
     user: User;
 }
 
+export class NameResponse {
+    firstName: string;
+    lsatName: string;
+}
+
 export abstract class IQuery {
-    abstract userLogin(email?: Nullable<string>, password?: Nullable<string>): LoginResponse | Promise<LoginResponse>;
+    abstract getNames(): Nullable<NameResponse> | Promise<Nullable<NameResponse>>;
 }
 
 export abstract class IMutation {
+    abstract userLogin(email?: Nullable<string>, password?: Nullable<string>): Nullable<LoginResponse> | Promise<Nullable<LoginResponse>>;
+
     abstract createUser(input: UserInput): Nullable<User> | Promise<Nullable<User>>;
 }
 

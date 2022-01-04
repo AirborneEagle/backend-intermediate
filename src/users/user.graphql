@@ -11,16 +11,20 @@ input UserInput{
     password: String!
 }
 
-# for some reason NestJS is not updating the type classes, so I can't use this just yet.
 type LoginResponse {
     jwt: String!
     user: User!
 }
+type NameResponse {
+    firstName: String!
+    lsatName: String!
+}
 
 type Query {
-    userLogin(email: String, password: String) : LoginResponse
+    getNames: NameResponse
 }
 
 type Mutation {
-  createUser(input: UserInput!): User
+    userLogin(email: String, password: String) : LoginResponse
+    createUser(input: UserInput!): User
 }
