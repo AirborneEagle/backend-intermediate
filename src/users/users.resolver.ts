@@ -1,4 +1,4 @@
-import { CacheKey } from "@nestjs/common";
+import { CacheKey, UseGuards } from "@nestjs/common";
 import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
 import { IncomingMessage } from "http";
 import { JwtPayload, verify } from "jsonwebtoken";
@@ -6,6 +6,7 @@ import { RedisCacheService } from "src/db/redis.service";
 import PostEntity from "src/posts/posts.entity";
 import { PostsService } from "src/posts/posts.service";
 import { UserInput, User, LoginResponse, NameResponse, Post } from "../graphql";
+import { AuthGuard, Jwt } from "./users.enhancements";
 import { UsersService } from "./users.service";
 
 @Resolver("User")
@@ -33,12 +34,9 @@ export class UsersResolver {
       }
 
       @Query()
-      async getNames(@Context("req") request: IncomingMessage){
-        console.log(request)
-        const authToken = request.headers.authentication as string
-        const decoded = verify(authToken, process.env.JWT_SECRET) as JwtPayload
-        const email = decoded.email
-        const user = await this.usersService.findOneByEmail(email)
+      @UseGuards(AuthGuard)
+      async getNames(@Jwt() jwt: string){
+        const user = await this.usersService.getByJwt(jwt)
         const response = new NameResponse()
         response.firstName = user.firstName
         response.lsatName = user.lastName
