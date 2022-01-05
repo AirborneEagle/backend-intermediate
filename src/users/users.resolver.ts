@@ -3,6 +3,7 @@ import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from "
 import { IncomingMessage } from "http";
 import { JwtPayload, verify } from "jsonwebtoken";
 import { RedisCacheService } from "src/db/redis.service";
+import PostEntity from "src/posts/posts.entity";
 import { PostsService } from "src/posts/posts.service";
 import { UserInput, User, LoginResponse, NameResponse, Post } from "../graphql";
 import { UsersService } from "./users.service";
@@ -16,30 +17,7 @@ export class UsersResolver {
       ) {}    
 
       async _resolveUserPosts(userId: number) : Promise<Post[]>{
-        const cacheKey = `posts-byUser-${userId}`
-        const cacheVal = await this.redisSerice.get(cacheKey)
-        const cachedPosts = JSON.parse(cacheVal)
-        console.log("cached: " + cachedPosts)
-        if(!cachedPosts || !Array.isArray(cachedPosts)) {
-        console.log("getting fresh data")
-        const postEntities = await this.postsService.findByUserId(userId)
-        this.redisSerice.set(cacheKey, JSON.stringify(postEntities))
-        return postEntities.map<Post>((pe, _index, _all) => {
-          const post = new Post()
-          post.message = pe.message
-          post.userId = pe.userId
-          return post
-        })
-        } else {
-          // this.redisSerice.del(cacheKey)
-          // console.log("deleted cache:")
-          return cachedPosts.map((val, _index, _list) => {
-            const post = new Post()
-            post.message = val.message
-            post.userId = val.userId
-            return post
-          })
-        }
+        return await this.redisSerice.getOrCacheListQuery(PostEntity, {userId: userId})
       }
 
       @ResolveField()

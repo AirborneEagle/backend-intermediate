@@ -11,6 +11,10 @@ export class UsersService {
         const email = decoded.email
         return await this.findOneByEmail(email)
     }
+    async findOne(where: object) {
+        return UserEntity.findOne({where: where})
+    }
+
     async findOneByEmail(email: string) {
         return UserEntity.findOne({where: { email: `${email}` }})
     }

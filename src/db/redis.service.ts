@@ -14,12 +14,14 @@ export class RedisCacheService {
       });
       
 
-    async getCacheListQuery<T extends Model>(entity: ModelCtor<T>, where: object){
+    async getOrCacheListQuery<T extends Model>(entity: ModelCtor<T>, where: object){
         const queryKey = JSON.stringify(where)
         const cacheVal = await this.redisCache.get(queryKey)
         const arrayObjs = JSON.parse(cacheVal)
-        if(cacheVal || !Array.isArray(arrayObjs)) {
-            return entity.findAll({where: where})
+        if(!cacheVal || !Array.isArray(arrayObjs)) {
+            const freshData = await entity.findAll({where: where})
+            await this.set(queryKey, JSON.stringify(freshData))
+            return freshData
         } else {
             return arrayObjs.map((val, index, all) => {
                 return val as T
@@ -27,8 +29,18 @@ export class RedisCacheService {
         }
     }
 
-    async getCacheOneQuery<T extends Model>(entity: ModelCtor<T>){
-        entity.findOne
+    async getCacheOneQuery<T extends Model>(entity: ModelCtor<T>, where: object){
+        const queryKey = JSON.stringify(where)
+        const cacheVal = await this.redisCache.get(queryKey)
+        const object = JSON.parse(cacheVal)
+        if(!cacheVal) {
+            const freshData = await entity.findOne({where: where})
+            await this.set(queryKey, JSON.stringify(freshData))
+            return freshData
+        } else {
+            return object as T
+        }
+
     }
 
     async get(key: string) {
