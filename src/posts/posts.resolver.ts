@@ -17,7 +17,10 @@ export class PostsResolver {
     @UseGuards(AuthGuard)
     async createPost(@Args("message") message: string, @Jwt() jwt: string){
         const user = await this.usersService.getByJwt(jwt)
-        const post = await this.postsService.createPost(message, user)
+        // TODO create a method that simply decodes and returns the JWT values.
+        // also create a type/class for those values eg: UserJwt.id UserJwt.email
+        // heck we could just store all the field values in the jwt. Might save some DB and cache requests
+        const post = await this.postsService.createPost(message, user.id)
         const response = new Post()
         response.message = post.message
         response.userId = user.id

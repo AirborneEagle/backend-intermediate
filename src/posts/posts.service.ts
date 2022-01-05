@@ -12,10 +12,10 @@ export class PostsService {
       return await PostEntity.findAll({where: {userId: userId}})
     }
 
-    async createPost(message: string, user: UserEntity) : Promise<PostEntity>{
+    async createPost(message: string, userId: number) : Promise<PostEntity>{
         const post = new PostEntity()
         post.message = message
-        post.userId = user.id
+        post.userId = userId
         post.save()
         return post
     }
